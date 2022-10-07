@@ -31,7 +31,7 @@ def load_mat2numpy(fname=""):
 
 
 class PQMF(nn.Module):
-    def __init__(self, N, M, project_root):
+    def __init__(self, N, M, filters_dir):
         super().__init__()
         self.N = N  # nsubband
         self.M = M  # nfilter
@@ -45,7 +45,7 @@ class PQMF(nn.Module):
             1, out_channels=N, kernel_size=M, stride=N, bias=False
         )
 
-        filters_dir = '{}/bytesep_data/filters'.format(str(pathlib.Path.home()))
+        # filters_dir = '{}/bytesep_data/filters'.format(str(pathlib.Path.home()))
 
         for _name in ['f_4_64.mat', 'h_4_64.mat']:
 
@@ -101,10 +101,10 @@ class PQMF(nn.Module):
         ret = None
         for i in range(inputs.size()[1]):  # channels
             if ret is None:
-                ret = self.__analysis_channel(inputs[:, i : i + 1, :])
+                ret = self.__analysis_channel(inputs[:, i: i + 1, :])
             else:
                 ret = torch.cat(
-                    (ret, self.__analysis_channel(inputs[:, i : i + 1, :])), dim=1
+                    (ret, self.__analysis_channel(inputs[:, i: i + 1, :])), dim=1
                 )
         return ret
 
@@ -118,9 +118,9 @@ class PQMF(nn.Module):
         for i in range(data.size()[1]):  # channels
             if i % self.N == 0:
                 if ret is None:
-                    ret = self.__systhesis_channel(data[:, i : i + self.N, :])
+                    ret = self.__systhesis_channel(data[:, i: i + self.N, :])
                 else:
-                    new = self.__systhesis_channel(data[:, i : i + self.N, :])
+                    new = self.__systhesis_channel(data[:, i: i + self.N, :])
                     ret = torch.cat((ret, new), dim=1)
         ret = ret[..., : -self.pad_samples]
         return ret

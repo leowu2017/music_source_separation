@@ -35,7 +35,7 @@ class UNetSubbandTime(nn.Module, Base):
         self.pqmf = PQMF(
             N=self.subbands_num,
             M=64,
-            project_root='bytesep/models/subband_tools/filters',
+            filters_dir='./filters',
         )
 
         self.stft = STFT(
@@ -320,7 +320,7 @@ class UNetSubbandTime(nn.Module, Base):
         # x: (batch_size, input_channels * subbands_num, padded_time_steps, freq_bins)
 
         # Let frequency bins be evenly divided by 2, e.g., 257 -> 256
-        x = x[..., 0 : x.shape[-1] - 1]  # (bs, input_channels, T, F)
+        x = x[..., 0: x.shape[-1] - 1]  # (bs, input_channels, T, F)
         # x: (batch_size, input_channels * subbands_num, padded_time_steps, freq_bins)
 
         # UNet
@@ -366,10 +366,10 @@ class UNetSubbandTime(nn.Module, Base):
         separated_subband_audio = torch.cat(
             [
                 self.feature_maps_to_wav(
-                    input_tensor=x[:, j * C1 : (j + 1) * C1, :, :],
-                    sp=mag[:, j * C2 : (j + 1) * C2, :, :],
-                    sin_in=sin_in[:, j * C2 : (j + 1) * C2, :, :],
-                    cos_in=cos_in[:, j * C2 : (j + 1) * C2, :, :],
+                    input_tensor=x[:, j * C1: (j + 1) * C1, :, :],
+                    sp=mag[:, j * C2: (j + 1) * C2, :, :],
+                    sin_in=sin_in[:, j * C2: (j + 1) * C2, :, :],
+                    cos_in=cos_in[:, j * C2: (j + 1) * C2, :, :],
                     audio_length=audio_length,
                 )
                 for j in range(self.subbands_num)

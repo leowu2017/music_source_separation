@@ -283,7 +283,7 @@ class MobileNet_Subbandtime(nn.Module, Base):
         self.pqmf = PQMF(
             N=self.subbands_num,
             M=64,
-            project_root='bytesep/models/subband_tools/filters',
+            filters_dir='./filters',
         )
 
         self.stft = STFT(

@@ -234,7 +234,7 @@ class ResUNet143_Subbandtime(nn.Module, Base):
         self.pqmf = PQMF(
             N=self.subbands_num,
             M=64,
-            project_root='bytesep/models/subband_tools/filters',
+            filters_dir='./filters',
         )
 
         self.stft = STFT(
@@ -255,6 +255,7 @@ class ResUNet143_Subbandtime(nn.Module, Base):
             center=center,
             pad_mode=pad_mode,
             freeze_parameters=True,
+            onnx=True,
         )
 
         self.bn0 = nn.BatchNorm2d(window_size // 2 + 1, momentum=momentum)
@@ -541,7 +542,7 @@ class ResUNet143_Subbandtime(nn.Module, Base):
         # x: (batch_size, input_channels * subbands_num, padded_time_steps, freq_bins)
 
         # Let frequency bins be evenly divided by 2, e.g., 257 -> 256
-        x = x[..., 0 : x.shape[-1] - 1]  # (bs, input_channels, T, F)
+        x = x[..., 0: x.shape[-1] - 1]  # (bs, input_channels, T, F)
         # x: (batch_size, input_channels * subbands_num, padded_time_steps, freq_bins)
 
         # UNet
@@ -579,13 +580,13 @@ class ResUNet143_Subbandtime(nn.Module, Base):
         separated_subband_audio = torch.stack(
             [
                 self.feature_maps_to_wav(
-                    input_tensor=x[:, j :: self.subbands_num, :, :],
+                    input_tensor=x[:, j:: self.subbands_num, :, :],
                     # input_tensor: (batch_size, target_sources_num * output_channels * self.K, T, F')
-                    sp=mag[:, j :: self.subbands_num, :, :],
+                    sp=mag[:, j:: self.subbands_num, :, :],
                     # sp: (batch_size, input_channels, T, F')
-                    sin_in=sin_in[:, j :: self.subbands_num, :, :],
+                    sin_in=sin_in[:, j:: self.subbands_num, :, :],
                     # sin_in: (batch_size, input_channels, T, F')
-                    cos_in=cos_in[:, j :: self.subbands_num, :, :],
+                    cos_in=cos_in[:, j:: self.subbands_num, :, :],
                     # cos_in: (batch_size, input_channels, T, F')
                     audio_length=audio_length,
                 )
