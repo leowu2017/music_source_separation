@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-def init_embedding(layer: nn.Module) -> NoReturn:
+def init_embedding(layer: nn.Module) -> None:
     r"""Initialize a Linear or Convolutional layer."""
     nn.init.uniform_(layer.weight, -1.0, 1.0)
 
@@ -15,7 +15,7 @@ def init_embedding(layer: nn.Module) -> NoReturn:
             layer.bias.data.fill_(0.0)
 
 
-def init_layer(layer: nn.Module) -> NoReturn:
+def init_layer(layer: nn.Module) -> None:
     r"""Initialize a Linear or Convolutional layer."""
     nn.init.xavier_uniform_(layer.weight)
 
@@ -24,7 +24,7 @@ def init_layer(layer: nn.Module) -> NoReturn:
             layer.bias.data.fill_(0.0)
 
 
-def init_bn(bn: nn.Module) -> NoReturn:
+def init_bn(bn: nn.Module) -> None:
     r"""Initialize a Batchnorm layer."""
     bn.bias.data.fill_(0.0)
     bn.weight.data.fill_(1.0)

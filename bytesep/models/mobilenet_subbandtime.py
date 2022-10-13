@@ -304,6 +304,7 @@ class MobileNet_Subbandtime(nn.Module, Base):
             center=center,
             pad_mode=pad_mode,
             freeze_parameters=True,
+            onnx=True,
         )
 
         self.bn0 = nn.BatchNorm2d(window_size // 2 + 1, momentum=momentum)
